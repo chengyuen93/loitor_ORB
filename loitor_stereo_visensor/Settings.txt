@@ -1,0 +1,78 @@
+mode : 1
+fps : 54
+HB : 150
+visensor_cam_selection : 2
+res : 0
+
+mode : 2
+fps : 54
+HB : 150
+visensor_cam_selection : 1
+res : 0
+
+mode : 3
+fps : 54
+HB : 150
+visensor_cam_selection : 2
+res : 1
+
+mode : 4
+fps : 54
+HB : 150
+visensor_cam_selection : 1
+res : 1
+
+mode : 5
+fps : 54
+HB : 250
+visensor_cam_selection : 0
+res : 0
+
+mode : 6
+fps : 54
+HB : 270
+visensor_cam_selection : 0
+res : 1
+
+mode : 7
+fps : 54
+HB : 150
+visensor_cam_selection : 2
+res : 0
+
+mode : 8
+fps : 54
+HB : 150
+visensor_cam_selection : 1
+res : 0
+
+mode : 9
+fps : 54
+HB : 150
+visensor_cam_selection : 2
+res : 1
+
+mode : 10
+fps : 54
+HB : 150
+visensor_cam_selection : 1
+res : 1
+
+mode : 11
+fps : 27
+HB : 280
+visensor_cam_selection : 0
+res : 0
+
+mode : 12
+fps : 27
+HB : 250
+visensor_cam_selection : 0
+res : 1
+
+mode : 13
+fps : 54
+HB : 194
+visensor_cam_selection : 0
+res : 0
+

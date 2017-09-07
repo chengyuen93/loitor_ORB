@@ -1,0 +1,117 @@
+%YAML:1.0
+
+#----------------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#----------------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV)
+Camera.fx: 431.294121413693006
+Camera.fy: 431.294121413693006
+Camera.cx: 346.934539794921875
+Camera.cy: 225.446462631225586
+
+Camera.k1: -0.382485315962059
+Camera.k2: 0.122257301049258
+Camera.p1: -0.000488665841515
+Camera.p2: -0.003195783652587
+Camera.k3: 0.000000000000000
+
+Camera.width: 752
+Camera.height: 480
+
+# Camera frames per second
+Camera.fps: 20.0
+
+# stereo baseline times fx
+Camera.bf: 42.642364121601787
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+ThDepth: 35
+
+#----------------------------------------------------------------------------------------------------
+# Stereo Rectification. Only if you need to pre-rectify the images
+# Camera.fx, .fy, etc must be the same as in LEFT.P
+#----------------------------------------------------------------------------------------------------
+LEFT.height: 480
+LEFT.width: 752
+LEFT.D: !!opencv-matrix
+    rows: 1
+    cols: 5
+    dt: d
+    data: [-0.3824853159620591, 0.12225730104925822, -0.000488665841514948, -0.003195783652587274, 0.0]
+LEFT.K: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [463.4397109090814, 0.0, 406.87002366353113, 0.0, 462.9069890953166, 220.62238724116997, 0.0, 0.0, 1.0]
+LEFT.R: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [0.9980683230803494, -0.0038922410344329585, 0.06200381378035848, 0.003686114605446018, 0.9999872947104594, 0.003438455579513053, -0.06201640930185343, -0.003203260430661729, 0.9980699895798483]
+LEFT.P: !!opencv-matrix
+    rows: 3
+    cols: 4
+    dt: d
+    data: [431.294121413693, 0.0, 346.9345397949219, 0.0, 0.0, 431.294121413693, 225.4464626312256, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+RIGHT.height: 480
+RIGHT.width: 752
+RIGHT.D: !!opencv-matrix
+    rows: 1
+    cols: 5
+    dt: d
+    data: [-0.4141992458350781, 0.17630137378347702, -0.0009200456246029337, 0.0006259670279360252, 0.0]
+RIGHT.K: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [458.24055489559294, 0.0, 361.74327492191935, 0.0, 458.8540571553325, 223.41523275201303, 0.0, 0.0, 1.0]
+RIGHT.R: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [0.99897737165783, 0.0006440396150934788, 0.045208363480535266, -0.0004937945339960432, 0.9999943186884233, -0.0033344801445487895, -0.04521025417504529, 0.0033087465678689762, 0.998972014179365]
+RIGHT.P: !!opencv-matrix
+    rows: 3
+    cols: 4
+    dt: d
+    data: [431.294121413693, 0.0, 346.9345397949219, -42.64236412160179, 0.0, 431.294121413693, 225.4464626312256, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+#----------------------------------------------------------------------------------------------------
+# ORB Parameters
+#----------------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 1200
+
+# ORB Extractor: Scale factor between levels in the scale pyramid
+
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#----------------------------------------------------------------------------------------------------
+# Viewer Parameters
+#----------------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500
