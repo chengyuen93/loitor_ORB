@@ -33,7 +33,16 @@
 
 #include <opencv2/core/core.hpp>
 
+//----------------------------------------------------------------------------------------------------------------2/10
+#include "geometry_msgs/TransformStamped.h"
+//----------------------------------------------------------------------------------------------------------------
+
 #include "System.h"
+
+//----------------------------------------------------------------------------------------------------------------2/10
+#include "tf/transform_datatypes.h"
+#include <tf/transform_broadcaster.h>
+//----------------------------------------------------------------------------------------------------------------
 
 using namespace std;
 
@@ -185,7 +194,73 @@ void ImageGrabber::GrabStereo(const sensor_msgs::ImageConstPtr& msgLeft,const se
         cv::Mat imLeft, imRight;
         cv::remap(cv_ptrLeft->image,imLeft,M1l,M2l,cv::INTER_LINEAR);
         cv::remap(cv_ptrRight->image,imRight,M1r,M2r,cv::INTER_LINEAR);
-        mpSLAM->TrackStereo(imLeft,imRight,cv_ptrLeft->header.stamp.toSec());
+        // mpSLAM->TrackStereo(imLeft,imRight,cv_ptrLeft->header.stamp.toSec());
+
+//----------------------------------------------------------------------------------------------------------------2/10
+        cv::Mat pose = mpSLAM->TrackStereo(imLeft,imRight,cv_ptrLeft->header.stamp.toSec());
+
+        if (pose.empty()) return;
+
+        /* global left handed coordinate system */
+        static cv::Mat pose_prev = cv::Mat::eye(4, 4, CV_32F);
+        static cv::Mat world_lh = cv::Mat::eye(4, 4, CV_32F);
+        // matrix to flip signs of sinus in rotation matrix, not sure why we need to do that
+        static const cv::Mat flipSign = (cv::Mat_<float>(4,4) << 1, -1, -1, 1,
+                                                                -1, 1, -1, 1,
+                                                                -1, -1, 1, 1,
+                                                                1, 1, 1, 1);
+
+        //prev_pose * T = pose
+        cv::Mat translation = (pose * pose_prev.inv()).mul(flipSign);
+        world_lh = world_lh * translation;
+        pose_prev = pose.clone();
+
+
+        tf::Matrix3x3 tf3d;
+        tf3d.setValue(pose.at<float>(0,0), pose.at<float>(0,1), pose.at<float>(0,2),
+                        pose.at<float>(1,0), pose.at<float>(1,1), pose.at<float>(1,2),
+                        pose.at<float>(2,0), pose.at<float>(2,1), pose.at<float>(2,2));
+
+
+        /* transform into global right handed coordinate system, publish in ROS */
+        // tf::Matrix3x3 cameraRotation_rh(-world_lh.at<float>(0,0), world_lh.at<float>(0,1), world_lh.at<float>(0,2),
+        //                                 -world_lh.at<float>(1,0), world_lh.at<float>(1,1), world_lh.at<float>(1,2),
+        //                                 world_lh.at<float>(2,0), -world_lh.at<float>(2,1), -world_lh.at<float>(2,2));
+
+        tf::Vector3 cameraTranslation_rh(world_lh.at<float>(0,3), world_lh.at<float>(1,3), -world_lh.at<float>(2,3));
+
+        //rotate 270deg about x and 270deg about x to get ENU: x forward, y left, z up
+        const tf::Matrix3x3 rotation270degXZ(   0, 1, 0,
+                                                0, 0, 1,
+                                                1, 0, 0);
+
+        static tf::TransformBroadcaster br;
+        // tf::Quaternion q;
+
+        // tf::Matrix3x3 globalRotation_rh = cameraRotation_rh * rotation270degXZ;
+        tf::Matrix3x3 globalRotation_rh = tf3d;
+        tf::Vector3 globalTranslation_rh = cameraTranslation_rh * rotation270degXZ;
+
+        // globalRotation_rh.getRotation(q);
+
+        tf::Quaternion tfqt;
+        globalRotation_rh.getRotation(tfqt);
+
+        double aux = tfqt[0];
+        tfqt[0] = -tfqt[2];
+        tfqt[2] = tfqt[1];
+        tfqt[1] = aux;
+
+        tf::Transform transform;
+        transform.setOrigin(globalTranslation_rh);
+        transform.setRotation(tfqt);
+
+        // tf::Transform transform = tf::Transform(q, globalTranslation_rh);
+        // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "camera_link", "camera_pose"));
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "camera_pose"));
+
+//----------------------------------------------------------------------------------------------------------------
+
     }
     else
     {
